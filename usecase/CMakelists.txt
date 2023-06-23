@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.10)
+project(learn-openGL-usecase)
+
+
+message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17")
+message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+
+
+link_directories(${PROJECT_SOURCE_DIR}/../3rd/lib)
+set(3RD_SOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/../3rd/src/glad.c
+    ../../${DIR_LIB_SRCS}
+)
+
+set(INCLUDE_FILES
+    ${PROJECT_SOURCE_DIR}/../3rd/include
+    ${PROJECT_SOURCE_DIR}/../include
+)
+include_directories(${INCLUDE_FILES})
+
+add_executable(start ${3RD_SOURCE_FILES} start/start.cpp)
+target_link_libraries(start glfw3)

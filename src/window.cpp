@@ -4,7 +4,7 @@
 #include "log.h"
 
 Window::Window()
-    :Window(800, 600)
+    :Window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
 
 }

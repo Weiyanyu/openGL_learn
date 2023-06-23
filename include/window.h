@@ -6,6 +6,9 @@ class GLFWwindow;
 using FrameBufferSizeCallbackFunc = void (*)(GLFWwindow*, int, int);
 using KeyCallbackFunc = void(*)(GLFWwindow*, int, int, int, int);
 
+#define DEFAULT_WINDOW_WIDTH 800
+#define DEFAULT_WINDOW_HEIGHT 600
+
 class Window
 {
 public:

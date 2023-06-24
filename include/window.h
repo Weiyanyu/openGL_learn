@@ -14,6 +14,7 @@ class Window
 public:
     Window();
     Window(int with, int height);
+    ~Window();
 
     GLFWwindow* glfwWindow() const;
     void        setFrameBufferSizeCallback(FrameBufferSizeCallbackFunc cb);

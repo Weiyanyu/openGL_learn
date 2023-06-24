@@ -6,11 +6,12 @@ message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17")
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 
+aux_source_directory(../src DIR_LIB_SRCS)
 
 link_directories(${PROJECT_SOURCE_DIR}/../3rd/lib)
-set(3RD_SOURCE_FILES
+set(ALL_SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/../3rd/src/glad.c
-    ../../${DIR_LIB_SRCS}
+    ${DIR_LIB_SRCS}
 )
 
 set(INCLUDE_FILES
@@ -19,5 +20,5 @@ set(INCLUDE_FILES
 )
 include_directories(${INCLUDE_FILES})
 
-add_executable(start ${3RD_SOURCE_FILES} start/start.cpp)
+add_executable(start ${ALL_SOURCE_FILES} start/start.cpp)
 target_link_libraries(start glfw3)

@@ -29,6 +29,16 @@ Window::Window(int with, int height)
     gladLoadGL();
 }
 
+Window::~Window()
+{
+    if (m_window)
+    {
+        // release
+        GL_LOG_D("release window");
+        glfwTerminate();
+    }
+}
+
 GLFWwindow* Window::glfwWindow() const
 {
     return m_window;

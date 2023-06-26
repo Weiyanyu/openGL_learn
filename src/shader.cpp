@@ -117,6 +117,22 @@ void ShaderProgram::use()
     glUseProgram(m_id);
 }
 
+// ----------------- uniform util function -----------------
+void ShaderProgram::setBool(const std::string& name, bool value) const
+{
+    setInt(name, static_cast<int>(value));
+}
+
+void ShaderProgram::setInt(const std::string& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(m_id, name.c_str()), value);
+}
+
+void ShaderProgram::setFloat(const std::string& name, float value) const
+{
+    glUniform1f(glGetUniformLocation(m_id, name.c_str()), value);
+}
+
 bool ShaderProgram::checkError()
 {
     int success;

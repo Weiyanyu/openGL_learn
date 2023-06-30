@@ -45,4 +45,26 @@ Texture::Texture(const std::string& path)
         std::abort();
     }
     stbi_image_free(data);
+
+
+}
+
+void Texture::setWarpType(unsigned int SWarpType, unsigned int TWarpType, const std::vector<float>& borderColor)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, SWarpType);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TWarpType);
+    if (SWarpType == GL_CLAMP_TO_BORDER || TWarpType == GL_CLAMP_TO_BORDER)
+    {
+        assert(borderColor.size() == 4);
+        // temp
+        float color[4];
+        std::memcpy(color, &borderColor[0], 4);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+    }
+}
+
+void Texture::setFilterType(unsigned int minFilter, unsigned int magFilter)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }

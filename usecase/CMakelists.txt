@@ -23,3 +23,6 @@ include_directories(${INCLUDE_FILES})
 # start
 add_executable(start ${ALL_SOURCE_FILES} start/start.cpp)
 target_link_libraries(start glfw3)
+
+add_executable(texture ${ALL_SOURCE_FILES} start/texture.cpp)
+target_link_libraries(texture glfw3)

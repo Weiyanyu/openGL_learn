@@ -45,19 +45,20 @@ int main()
     window.setKeyCallback(keyCallback);
     auto* glfwWindow = window.glfwWindow();
 
-    ShaderProgram      shaderProgram("../../resource/shader/1-start/texture.vs", "../../resource/shader/1-start/texture.fs");
-    Texture            texture("../../resource/texture/wall.jpg");
-    std::vector<float> borderColors = {1.0f, 1.0f, 0.0f, 1.0f};
-    texture.setWarpType(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, borderColors);
+    ShaderProgram shaderProgram("../../resource/shader/1-start/texture.vs", "../../resource/shader/1-start/texture.fs");
+    Texture       texture("../../resource/texture/wall.jpg");
+    // std::vector<float> borderColors = {1.0f, 1.0f, 0.0f, 1.0f};
+    // texture.setWarpType(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, borderColors);
+    texture.setFilterType(GL_LINEAR, GL_NEAREST);
     Texture textureFace("../../resource/texture/awesomeface.png");
 
     // clang-format off
     float vertices[] = {
     //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // 右上
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // 右下
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.1f, 0.1f,   // 右上
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.1f, 0.0f,   // 右下
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // 左上
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.1f    // 左上
     };
     unsigned int indices[] = {  
         0, 1, 3, // first triangle

@@ -11,7 +11,8 @@
 #include "shader.h"
 #include "texture.h"
 
-bool isWireframeMode = false;
+bool  isWireframeMode = false;
+float mixValue        = 0.0f;
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -36,6 +37,22 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
     }
+    else if(key == GLFW_KEY_UP && action == GLFW_PRESS)
+    {
+        mixValue += 0.1f;
+        if(mixValue >= 1.0f)
+        {
+            mixValue = 1.0f;
+        }
+    }
+    else if(key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+    {
+        mixValue -= 0.1f;
+        if(mixValue <= 0.0f)
+        {
+            mixValue = 0.0f;
+        }
+    }
 }
 
 int main()
@@ -49,16 +66,16 @@ int main()
     Texture       texture("../../resource/texture/wall.jpg");
     // std::vector<float> borderColors = {1.0f, 1.0f, 0.0f, 1.0f};
     // texture.setWarpType(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, borderColors);
-    texture.setFilterType(GL_LINEAR, GL_NEAREST);
+    // texture.setFilterType(GL_LINEAR, GL_NEAREST);
     Texture textureFace("../../resource/texture/awesomeface.png");
 
     // clang-format off
     float vertices[] = {
     //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.1f, 0.1f,   // 右上
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.1f, 0.0f,   // 右下
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.1f    // 左上
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
     };
     unsigned int indices[] = {  
         0, 1, 3, // first triangle
@@ -109,6 +126,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, textureFace.id());
 
         shaderProgram.use();
+        shaderProgram.setFloat("mixValue", mixValue);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

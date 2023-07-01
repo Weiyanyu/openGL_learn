@@ -56,10 +56,7 @@ void Texture::setWarpType(unsigned int SWarpType, unsigned int TWarpType, const 
     if (SWarpType == GL_CLAMP_TO_BORDER || TWarpType == GL_CLAMP_TO_BORDER)
     {
         assert(borderColor.size() == 4);
-        // temp
-        float color[4];
-        std::memcpy(color, &borderColor[0], 4);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &borderColor[0]);
     }
 }
 

@@ -32,9 +32,7 @@ public:
 
 public:
     ShaderProgram(const std::string& vertextPath, const std::string& fragmentPath);
-    ShaderProgram(const std::string& vertextPath,
-                  const std::string& fragmentPath,
-                  const std::string& geometryPath);
+    ShaderProgram(const std::string& vertextPath, const std::string& fragmentPath, const std::string& geometryPath);
     ~ShaderProgram();
 
     unsigned int id() const
@@ -47,6 +45,7 @@ public:
     void setBool(const std::string& name, bool value) const;
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;
+    void setMat4(const std::string& name, const float* value) const;
 
 private:
     void linkShader(unsigned int vertexId, unsigned int fragmentId);

@@ -26,3 +26,6 @@ target_link_libraries(start glfw3)
 
 add_executable(texture ${ALL_SOURCE_FILES} start/texture.cpp)
 target_link_libraries(texture glfw3)
+
+add_executable(transform ${ALL_SOURCE_FILES} start/transform.cpp)
+target_link_libraries(transform glfw3)

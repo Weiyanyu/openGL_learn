@@ -10,7 +10,6 @@
 
 Texture::Texture(const std::string& path)
 {
-
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   
@@ -45,8 +44,12 @@ Texture::Texture(const std::string& path)
         std::abort();
     }
     stbi_image_free(data);
+}
 
-
+Texture::~Texture()
+{
+    GL_LOG_D("release texture %d", m_id);
+    glDeleteTextures(1, &m_id);
 }
 
 void Texture::setWarpType(unsigned int SWarpType, unsigned int TWarpType, const std::vector<float>& borderColor)

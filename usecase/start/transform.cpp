@@ -13,9 +13,16 @@
 #include "window.h"
 #include "shader.h"
 #include "texture.h"
+#include "camera.h"
 
-bool  isWireframeMode = false;
-float mixValue        = 0.0f;
+float  windowW = 800.0f, windowH = 600.0f;
+bool   isWireframeMode = false;
+float  mixValue        = 0.0f;
+float  deltaTime       = 0.0f; // 当前帧与上一帧的时间差
+float  lastFrame       = 0.0f; // 上一帧的时间
+float  lastX = windowW / 2, lastY = windowH / 2;
+bool   firstMouse = true;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -56,14 +63,47 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
             mixValue = 0.0f;
         }
     }
+
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.move(CameraDirection::FORWARD, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.move(CameraDirection::BACKWARD, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.move(CameraDirection::LEFT, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.move(CameraDirection::RIGHT, deltaTime);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if(firstMouse)
+    {
+        lastX      = xpos;
+        lastY      = ypos;
+        firstMouse = false;
+    }
+
+    float xOffset = xpos - lastX;
+    float yOffset = lastY - ypos;
+    lastX         = xpos;
+    lastY         = ypos;
+
+    camera.processMouseMovement(xOffset, yOffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    camera.processMouseScroll(yOffset);
 }
 
 int main()
 {
 
-    Window window(800, 600);
+    Window window(windowW, windowH);
     window.setFrameBufferSizeCallback(frameBufferSizeCallback);
     window.setKeyCallback(keyCallback);
+    window.setMouseCallback(mouse_callback);
+    window.setScrollCallback(scroll_callback);
     auto* glfwWindow = window.glfwWindow();
     glEnable(GL_DEPTH_TEST);
 
@@ -171,6 +211,9 @@ int main()
         // render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        float currentFrame = glfwGetTime();
+        deltaTime          = currentFrame - lastFrame;
+        lastFrame          = currentFrame;
 
         // transform
         // glm::mat4 trans(1.0f);
@@ -179,10 +222,9 @@ int main()
 
         // MVP
 
-        glm::mat4 view(1.0f);
-        view = glm::translate(view, glm::vec3(0.0, 0.0, -3.0f));
+        glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection(1.0f);
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(camera.fov()), window.width() / window.height(), 0.1f, 100.0f);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id());
@@ -199,7 +241,7 @@ int main()
         {
             glm::mat4 model(1.0f);
             model       = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * (i + 1);
+            float angle = 20.0f * i;
             model       = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.0f, 0.0f));
             shaderProgram.setMat4("model", glm::value_ptr(model));
             glDrawArrays(GL_TRIANGLES, 0, 36);

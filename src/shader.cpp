@@ -138,6 +138,11 @@ void ShaderProgram::setMat4(const std::string& name, const float* value) const
     glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, value);
 }
 
+void ShaderProgram::setVec3(const std::string& name, const float* value) const
+{
+    glUniform3fv(glGetUniformLocation(m_id, name.c_str()), 1, value); 
+}
+
 bool ShaderProgram::checkError()
 {
     int success;

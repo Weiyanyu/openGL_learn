@@ -29,3 +29,7 @@ target_link_libraries(texture glfw3)
 
 add_executable(transform ${ALL_SOURCE_FILES} start/transform.cpp)
 target_link_libraries(transform glfw3)
+
+# lighting
+add_executable(lighting ${ALL_SOURCE_FILES} lighting/lighting.cpp)
+target_link_libraries(lighting glfw3)

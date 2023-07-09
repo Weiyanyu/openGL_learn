@@ -233,10 +233,16 @@ int main()
         LightingCubeShader.setMat4("projection", glm::value_ptr(projection));
         glm::mat4 lightCubeModel(1.0f);
         LightingCubeShader.setMat4("model", glm::value_ptr(lightCubeModel));
-        LightingCubeShader.setVec3("objectColor", glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
-        LightingCubeShader.setVec3("lightColor", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-        LightingCubeShader.setVec3("lightPos", glm::value_ptr(lightPos));
+        LightingCubeShader.setVec3("light.position", glm::value_ptr(lightPos));
         LightingCubeShader.setVec3("viewPos", glm::value_ptr(camera.position()));
+
+        LightingCubeShader.setVec3("material.ambient", glm::value_ptr(glm::vec3(0.0215f, 0.1745f, 0.0215f)));
+        LightingCubeShader.setVec3("material.diffuse", glm::value_ptr(glm::vec3(0.07568f, 0.61424f, 0.07568f)));
+        LightingCubeShader.setVec3("material.specular", glm::value_ptr(glm::vec3(0.633f, 0.727811f, 0.633f)));
+        LightingCubeShader.setFloat("material.shininess", 0.6f);
+        LightingCubeShader.setVec3("light.ambient", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+        LightingCubeShader.setVec3("light.diffuse", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+        LightingCubeShader.setVec3("light.specular", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
         // LightingCubeGouraudShader.use();
         // LightingCubeGouraudShader.setMat4("view", glm::value_ptr(view));

@@ -28,6 +28,7 @@ public:
     void      move(CameraDirection direction, float deltaTime);
     glm::mat4 getViewMatrix();
     glm::vec3 position() const;
+    glm::vec3 front() const;
     float     fov() const;
 
 protected:

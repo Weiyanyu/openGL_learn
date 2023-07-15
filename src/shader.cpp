@@ -94,7 +94,7 @@ void ShaderProgram::linkShader(unsigned int vertexId, unsigned int fragmentId)
     glLinkProgram(m_id);
     if (!checkError())
     {
-        GL_LOG_E("link shader error");
+        GL_LOG_E("link shader error %d", m_id);
         std::abort();
     }
 }
@@ -151,6 +151,7 @@ bool ShaderProgram::checkError()
     {
         char infoLog[512];
         glGetProgramInfoLog(m_id, 512, nullptr, infoLog);
+        GL_LOG_E("gl error : %s", infoLog);
         return false;
     }
     return true;

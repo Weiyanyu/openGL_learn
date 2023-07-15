@@ -108,9 +108,82 @@ int main()
     auto* glfwWindow = window.glfwWindow();
     glEnable(GL_DEPTH_TEST);
 
+    ShaderProgram LightingShader("../../resource/shader/2-lighting/lighting.vs", "../../resource/shader/2-lighting/lighting.fs");
     ShaderProgram shader("../../resource/shader/3-model/model.vs", "../../resource/shader/3-model/model.fs");
 
+    // clang-format off
+    float vertices[] = {
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+    };
+
+    // vao
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    // vbo
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+
+
     Model model("../../resource/model/nanosuit/nanosuit.obj");
+
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
+    LightingShader.use();
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -129,17 +202,53 @@ int main()
         // specular color
         // glBindTexture(GL_TEXTURE_2D, textureContainer2SpecularColor.id());
 
+        // render light
+        glBindVertexArray(VAO);
+        LightingShader.use();
+        LightingShader.setMat4("view", glm::value_ptr(view));
+        LightingShader.setMat4("projection", glm::value_ptr(projection));
+        glm::mat4 lightModel(1.0f);
+        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+        lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+        lightModel = glm::translate(lightModel, lightPos);
+        lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+        LightingShader.setMat4("model", glm::value_ptr(lightModel));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         shader.use();
         shader.setMat4("view", glm::value_ptr(view));
         shader.setMat4("projection", glm::value_ptr(projection));
         glm::mat4 nanosuitModel(1.0f);
         nanosuitModel = glm::translate(nanosuitModel, glm::vec3(0.0f, 0.0f, 0.0f));
         nanosuitModel = glm::scale(nanosuitModel, glm::vec3(0.1f, 0.1f, 0.1f));
-
         shader.setMat4("model", glm::value_ptr(nanosuitModel));
 
-        model.draw(shader);
+        shader.setFloat("material1.shininess", 32.0f);
+        shader.setVec3("dirLight.ambient", glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.0f)));
+        shader.setVec3("dirLight.diffuse", glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+        shader.setVec3("dirLight.specular", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+        shader.setVec3("dirLight.direction", glm::value_ptr(glm::vec3(0.0f, 0.0f, -2.0f)));
 
+        shader.setVec3("pointLight.ambient", glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.0f)));
+        shader.setVec3("pointLight.diffuse", glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+        shader.setVec3("pointLight.specular", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+        shader.setVec3("pointLight.position", glm::value_ptr(lightPos));
+        shader.setFloat("pointLight.constant", 1.0f);
+        shader.setFloat("pointLight.linear", 0.09f);
+        shader.setFloat("pointLight.quadratic", 0.032f);
+
+        shader.setVec3("spotLight.ambient", glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.0f)));
+        shader.setVec3("spotLight.diffuse", glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+        shader.setVec3("spotLight.specular", glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+        shader.setVec3("spotLight.position", glm::value_ptr(camera.position()));
+        shader.setVec3("spotLight.direction", glm::value_ptr(camera.front()));
+        shader.setFloat("spotLight.constant", 1.0f);
+        shader.setFloat("spotLight.linear", 0.09f);
+        shader.setFloat("spotLight.quadratic", 0.032f);
+        shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+        model.draw(shader);
         glfwSwapBuffers(glfwWindow);
         glfwPollEvents();
     }

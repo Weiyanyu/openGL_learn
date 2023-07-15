@@ -14,16 +14,16 @@ std::string Texture::translateTextureTypeName(TextureType textureType)
     switch (textureType)
     {
     case TextureType::TEXTURE_DIFFUSE:
-        textureTypename =  "texture_diffuse";
+        textureTypename =  "diffuse";
         break;
     case TextureType::TEXTURE_SPECULAR:
-        textureTypename =  "texture_specular";
+        textureTypename =  "specular";
         break;
     case TextureType::TEXTURE_NORMAL:
-        textureTypename =  "texture_normal";
+        textureTypename =  "normal";
         break;
     case TextureType::TEXTURE_HEIGHT:
-        textureTypename =  "texture_height";
+        textureTypename =  "height";
         break;
     default:
         break;
@@ -32,7 +32,7 @@ std::string Texture::translateTextureTypeName(TextureType textureType)
 }
 
 
-Texture::Texture(const std::string& path, TextureType textureType)
+Texture::Texture(const std::string& path, TextureType textureType, bool isFlip)
     :m_path(path),
     m_type(textureType)
 {
@@ -44,7 +44,7 @@ Texture::Texture(const std::string& path, TextureType textureType)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(isFlip);
     unsigned char* data = stbi_load(path.c_str(), &m_width, &m_height, &m_nrChannels, 0);
     if (data)
     {
@@ -110,8 +110,13 @@ Texture& Texture::operator=(Texture&& other)
         m_path = other.m_path;
         m_refCnt = other.m_refCnt;
 
+        other.m_id = 0;
+        other.m_width = 0;
+        other.m_height = 0;
+        other.m_nrChannels = 0;
+        other.m_type = TextureType::TEXTURE_DIFFUSE;
+        other.m_path = "";
         other.m_refCnt = nullptr;
-
     }
     return *this;
 }

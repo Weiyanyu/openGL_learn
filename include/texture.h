@@ -13,7 +13,7 @@ enum TextureType
 class Texture
 {
 public:
-    Texture(const std::string& path, TextureType textureType = TextureType::TEXTURE_DIFFUSE);
+    Texture(const std::string& path, TextureType textureType = TextureType::TEXTURE_DIFFUSE, bool isFlip = true);
     Texture(const Texture&);
     Texture& operator=(const Texture&);
     Texture(Texture&&);

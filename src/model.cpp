@@ -128,7 +128,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
         auto        loadedTexture = std::find_if(m_loadedTextures.begin(), m_loadedTextures.end(), [&fullPath](Texture& texture) { return texture.path() == fullPath; });
         if(loadedTexture == m_loadedTextures.end())
         {
-            textures.emplace_back(fullPath, textureType);
+            textures.emplace_back(fullPath, textureType, false);
             m_loadedTextures.push_back(textures.back());
         }
         else

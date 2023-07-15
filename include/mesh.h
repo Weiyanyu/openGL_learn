@@ -19,6 +19,11 @@ class Mesh
 {
 public:
     Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
+    Mesh(const Mesh& other);
+    Mesh& operator=(const Mesh& other);
+    Mesh(Mesh&& other);
+    Mesh& operator=(Mesh&& other);
+    ~Mesh();
 
     void draw(ShaderProgram& shader);
 
@@ -32,4 +37,5 @@ private:
     unsigned                  m_VAO;
     unsigned                  m_VBO;
     unsigned                  m_EBO;
+    unsigned int*             m_refCnt = nullptr;
 };

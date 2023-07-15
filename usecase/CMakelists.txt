@@ -20,16 +20,26 @@ set(INCLUDE_FILES
 )
 include_directories(${INCLUDE_FILES})
 
+set(LIBS
+    glfw3
+    libassimp-5
+    zlibstatic
+)
+
 # start
 add_executable(start ${ALL_SOURCE_FILES} start/start.cpp)
-target_link_libraries(start glfw3)
+target_link_libraries(start ${LIBS})
 
 add_executable(texture ${ALL_SOURCE_FILES} start/texture.cpp)
-target_link_libraries(texture glfw3)
+target_link_libraries(texture ${LIBS})
 
 add_executable(transform ${ALL_SOURCE_FILES} start/transform.cpp)
-target_link_libraries(transform glfw3)
+target_link_libraries(transform ${LIBS})
 
 # lighting
 add_executable(lighting ${ALL_SOURCE_FILES} lighting/lighting.cpp)
-target_link_libraries(lighting glfw3)
+target_link_libraries(lighting ${LIBS})
+
+# model
+add_executable(model-test ${ALL_SOURCE_FILES} model/model-test.cpp)
+target_link_libraries(model-test ${LIBS})

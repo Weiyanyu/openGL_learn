@@ -117,6 +117,10 @@ int main()
     Texture textureFace("../../resource/texture/awesomeface.png");
     Texture textureContainer2("../../resource/texture/container2.png");
     Texture textureContainer2Specular("../../resource/texture/container2_specular.png");
+    {
+        Texture textureContainer2SpecularCopy = textureContainer2Specular;
+    }
+
     // Texture textureContainer2SpecularColor("../../resource/texture/lighting_maps_specular_color.png");
     Texture textureMatrix("../../resource/texture/matrix.jpg");
 

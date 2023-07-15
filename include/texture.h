@@ -2,13 +2,26 @@
 #include <string>
 #include <vector>
 
+enum TextureType
+{
+    TEXTURE_DIFFUSE = 0,
+    TEXTURE_SPECULAR,
+    TEXTURE_NORMAL,
+    TEXTURE_HEIGHT,
+};
+
 class Texture
 {
 public:
-    Texture(const std::string& path);
-    Texture(const Texture&) = delete;
-    Texture& operator=(const Texture&) = delete;
+    Texture(const std::string& path, TextureType textureType = TextureType::TEXTURE_DIFFUSE);
+    Texture(const Texture&);
+    Texture& operator=(const Texture&);
+    Texture(Texture&&);
+    Texture& operator=(Texture&&);
     ~Texture();
+
+public:
+    static std::string translateTextureTypeName(TextureType textureType);
 
 public:
     void setWarpType(unsigned int SWarpType, unsigned int TWarpType, const std::vector<float>& borderColor = std::vector<float>());
@@ -19,10 +32,22 @@ public:
         return m_id;
     }
 
-private:
-    int m_width;
-    int m_height;
-    int m_nrChannels;
+    TextureType type() const
+    {
+        return m_type;
+    }
 
-    unsigned int m_id;
+    std::string path() const
+    {
+        return m_path;
+    }
+
+private:
+    int           m_width;
+    int           m_height;
+    int           m_nrChannels;
+    unsigned int  m_id;
+    TextureType   m_type;
+    std::string   m_path;
+    unsigned int* m_refCnt = nullptr;
 };

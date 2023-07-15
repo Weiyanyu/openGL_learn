@@ -5,6 +5,8 @@ project(learn-openGL)
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17")
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+# ADD_DEFINITIONS(-DASSIMP_USE_HUNTER)
+
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 

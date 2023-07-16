@@ -69,16 +69,19 @@ void Mesh::draw(ShaderProgram& shader)
         {
         case TextureType::TEXTURE_DIFFUSE:
             diffuseNr++;
+            number = std::to_string(diffuseNr);
             break;
         case TextureType::TEXTURE_SPECULAR:
             specularNr++;
+            number = std::to_string(specularNr);
             break;
         default:
             GL_LOG_E("don't support texture type %d yet", textureType);
             std::abort();
             break;
         }
-        std::string textureName = "material" + std::to_string(diffuseNr) + "." + Texture::translateTextureTypeName(textureType);
+
+        std::string textureName = "material" + number + "." + Texture::translateTextureTypeName(textureType);
         shader.setInt(textureName, i);
         glBindTexture(GL_TEXTURE_2D, m_texture[i].id());
     }

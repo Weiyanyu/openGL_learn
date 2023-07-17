@@ -43,3 +43,7 @@ target_link_libraries(lighting ${LIBS})
 # model
 add_executable(model-test ${ALL_SOURCE_FILES} model/model-test.cpp)
 target_link_libraries(model-test ${LIBS})
+
+# advanced-opengl
+add_executable(depth-test ${ALL_SOURCE_FILES} advanced-opengl/depth-test.cpp)
+target_link_libraries(depth-test ${LIBS})

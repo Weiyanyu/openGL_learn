@@ -47,3 +47,6 @@ target_link_libraries(model-test ${LIBS})
 # advanced-opengl
 add_executable(depth-test ${ALL_SOURCE_FILES} advanced-opengl/depth-test.cpp)
 target_link_libraries(depth-test ${LIBS})
+
+add_executable(stencil-test ${ALL_SOURCE_FILES} advanced-opengl/stencil-test.cpp)
+target_link_libraries(stencil-test ${LIBS})

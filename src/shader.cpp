@@ -69,6 +69,10 @@ ShaderProgram::ShaderProgram(const std::string& vertextPath, const std::string& 
     Shader vertextShader(vertextPath, ShaderType::VERTEX_SHADER);
     Shader fragmentShader(fragmentPath, ShaderType::FRAGMENT_SHADER);
     linkShader(vertextShader.id(), fragmentShader.id());
+    GL_LOG_D("init shader suceess:");
+    GL_LOG_D("vertex: %s ", vertextPath.c_str());
+    GL_LOG_D("fragment: %s ", fragmentPath.c_str());
+
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertextPath,
@@ -79,6 +83,11 @@ ShaderProgram::ShaderProgram(const std::string& vertextPath,
     Shader fragmentShader(fragmentPath, ShaderType::FRAGMENT_SHADER);
     Shader geometryShader(geometryPath, ShaderType::GEOMETRY_SHADER);
     linkShader(vertextShader.id(), fragmentShader.id(), geometryShader.id());
+    GL_LOG_D("init shader suceess:");
+    GL_LOG_D("vertex: %s ", vertextPath.c_str());
+    GL_LOG_D("fragment: %s ", fragmentPath.c_str());
+    GL_LOG_D("geometry: %s ", geometryPath.c_str());
+
 }
 
 ShaderProgram::~ShaderProgram()

@@ -50,3 +50,6 @@ target_link_libraries(depth-test ${LIBS})
 
 add_executable(stencil-test ${ALL_SOURCE_FILES} advanced-opengl/stencil-test.cpp)
 target_link_libraries(stencil-test ${LIBS})
+
+add_executable(blending ${ALL_SOURCE_FILES} advanced-opengl/blending.cpp)
+target_link_libraries(blending ${LIBS})

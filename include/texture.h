@@ -4,7 +4,8 @@
 
 enum TextureType
 {
-    TEXTURE_DIFFUSE = 0,
+    TEXTURE_BUFFER = 0,
+    TEXTURE_DIFFUSE,
     TEXTURE_SPECULAR,
     TEXTURE_NORMAL,
     TEXTURE_HEIGHT,
@@ -14,6 +15,7 @@ class Texture
 {
 public:
     Texture(const std::string& path, TextureType textureType = TextureType::TEXTURE_DIFFUSE, bool isFlip = true);
+    Texture(int width, int height, int nrChannels);
     Texture(const Texture&);
     Texture& operator=(const Texture&);
     Texture(Texture&&);

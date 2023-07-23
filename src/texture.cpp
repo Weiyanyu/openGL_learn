@@ -75,6 +75,38 @@ Texture::Texture(const std::string& path, TextureType textureType, bool isFlip)
     stbi_image_free(data);
 }
 
+Texture::Texture(int width, int height, int nrChannels)
+    :m_width(width),
+     m_height(height),
+     m_nrChannels(nrChannels),
+     m_type(TextureType::TEXTURE_BUFFER),
+     m_path("")
+{
+    m_refCnt = new unsigned(1);
+
+    int colorFormat = GL_RGB;
+    switch (nrChannels)
+    {
+    case 3:
+        colorFormat = GL_RGB;
+        break;
+    case 4:
+        colorFormat = GL_RGBA;
+        break;
+    default:
+        GL_LOG_E("don't support nrChannels %d yet.", nrChannels);
+        std::abort();
+    }
+
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, m_width, m_height, 0, colorFormat, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", m_path.c_str(), translateTextureTypeName(m_type).c_str(), m_width, m_height, m_nrChannels);
+}
+
 Texture::Texture(const Texture& other)
 {
     *this = other;

@@ -89,14 +89,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // material
     if(mesh->mMaterialIndex >= 0)
     {
-        aiMaterial*          material    = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
         aiTextureType        type        = aiTextureType_DIFFUSE;
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material, &type, "texture_diffuse");
-
         textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
+
         type                              = aiTextureType_SPECULAR;
         std::vector<Texture> specularMaps = loadMaterialTextures(material, &type, "texture_specular");
         textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
+
+        type                             = aiTextureType_AMBIENT;
+        std::vector<Texture> ambientMaps = loadMaterialTextures(material, &type, "texture_ambient");
+        textures.insert(textures.end(), std::make_move_iterator(ambientMaps.begin()), std::make_move_iterator(ambientMaps.end()));
     }
 
     return Mesh(vertices, indices, textures);
@@ -116,6 +121,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
             break;
         case aiTextureType_SPECULAR:
             textureType = TextureType::TEXTURE_SPECULAR;
+            break;
+        case aiTextureType_AMBIENT:
+            textureType = TextureType::TEXTURE_AMBIENT;
             break;
         default:
             GL_LOG_E("don't support texture %d yet", *type);

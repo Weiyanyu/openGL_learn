@@ -56,3 +56,6 @@ target_link_libraries(blending ${LIBS})
 
 add_executable(frameBuffer ${ALL_SOURCE_FILES} advanced-opengl/frameBuffer.cpp)
 target_link_libraries(frameBuffer ${LIBS})
+
+add_executable(skybox ${ALL_SOURCE_FILES} advanced-opengl/skybox.cpp)
+target_link_libraries(skybox ${LIBS})

@@ -179,7 +179,7 @@ int main()
 
 
 
-    Model model("../../resource/model/nanosuit/nanosuit.obj");
+    Model model("../../resource/model/nanosuit2/nanosuit.obj");
 
     glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 

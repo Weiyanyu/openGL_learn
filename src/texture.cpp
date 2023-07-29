@@ -25,6 +25,9 @@ std::string Texture::translateTextureTypeName(TextureType textureType)
     case TextureType::TEXTURE_HEIGHT:
         textureTypename =  "height";
         break;
+    case TextureType::TEXTURE_AMBIENT:
+        textureTypename =  "ambient";
+        break;
     default:
         break;
     }
@@ -33,8 +36,7 @@ std::string Texture::translateTextureTypeName(TextureType textureType)
 
 
 Texture::Texture(const std::string& path, TextureType textureType, bool isFlip)
-    :m_path(path),
-    m_type(textureType)
+    :m_type(textureType)
 {
     m_refCnt = new unsigned(1);
     glGenTextures(1, &m_id);
@@ -44,22 +46,25 @@ Texture::Texture(const std::string& path, TextureType textureType, bool isFlip)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    TextureProperty property;
+    property.path = path;
+
     stbi_set_flip_vertically_on_load(isFlip);
-    unsigned char* data = stbi_load(path.c_str(), &m_width, &m_height, &m_nrChannels, 0);
+    unsigned char* data = stbi_load(path.c_str(), &property.width, &property.height, &property.nrChannels, 0);
     if (data)
     {
-        switch (m_nrChannels)
+        switch (property.nrChannels)
         {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, property.width, property.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);   
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, property.width, property.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);   
+            // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             break;
         default:
-            GL_LOG_E("load texture failed. don't support nr channels %d", m_nrChannels);
+            GL_LOG_E("load texture failed. don't support nr channels %d", property.nrChannels);
             std::abort();
             break;
         }
@@ -71,18 +76,68 @@ Texture::Texture(const std::string& path, TextureType textureType, bool isFlip)
         GL_LOG_E("Failed to load texture %s", path.c_str());
         std::abort();
     }
-     GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", path.c_str(), translateTextureTypeName(m_type).c_str(), m_width, m_height, m_nrChannels);
+    m_properties.push_back(property);
+
+    GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", property.path.c_str(), translateTextureTypeName(m_type).c_str(), property.width, property.height, property.nrChannels);
     stbi_image_free(data);
 }
 
-Texture::Texture(int width, int height, int nrChannels)
-    :m_width(width),
-     m_height(height),
-     m_nrChannels(nrChannels),
-     m_type(TextureType::TEXTURE_BUFFER),
-     m_path("")
+Texture::Texture(const std::vector<std::string>& paths, TextureType textureType, bool isFlip)
+    :m_type(textureType)
 {
     m_refCnt = new unsigned(1);
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);   
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_set_flip_vertically_on_load(isFlip);
+    for (size_t i = 0; i < paths.size(); i++)
+    {
+        TextureProperty property;
+        property.path = paths[i];
+        unsigned char* data = stbi_load(property.path.c_str(), &property.width, &property.height, &property.nrChannels, 0);   
+        if (data)
+        {
+            switch (property.nrChannels)
+            {
+            case 3:
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, property.width, property.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+                break;
+            case 4:
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, property.width, property.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+                break;
+            default:
+                GL_LOG_E("load texture failed. don't support nr channels %d", property.nrChannels);
+                std::abort();
+                break;
+            }
+            
+            glGenerateMipmap(m_id);
+        }
+        else
+        {
+            GL_LOG_E("Failed to load texture %s", property.path.c_str());
+            std::abort();
+        }
+        m_properties.push_back(property);
+        GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", property.path.c_str(), translateTextureTypeName(m_type).c_str(), property.width, property.height, property.nrChannels);
+    }
+}
+
+
+Texture::Texture(int width, int height, int nrChannels)
+    :m_type(TextureType::TEXTURE_BUFFER)
+{
+    m_refCnt = new unsigned(1);
+    TextureProperty property;
+    property.width = width;
+    property.height = height;
+    property.nrChannels = nrChannels;
+    property.path = "";
 
     int colorFormat = GL_RGB;
     switch (nrChannels)
@@ -100,11 +155,14 @@ Texture::Texture(int width, int height, int nrChannels)
 
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, m_width, m_height, 0, colorFormat, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, property.width, property.height, 0, colorFormat, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
-    GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", m_path.c_str(), translateTextureTypeName(m_type).c_str(), m_width, m_height, m_nrChannels);
+
+    m_properties.push_back(property);
+
+    GL_LOG_D("load texture %s type %s witdh %d height %d nrChannels %d", property.path.c_str(), translateTextureTypeName(m_type).c_str(), property.width, property.height, property.nrChannels);
 }
 
 Texture::Texture(const Texture& other)
@@ -117,10 +175,8 @@ Texture& Texture::operator=(const Texture& other)
     if (this != &other)
     {
         m_id = other.m_id;
-        m_width = other.m_width;
-        m_nrChannels = other.m_nrChannels;
+        m_properties = other.m_properties;
         m_type = other.m_type;
-        m_path = other.m_path;
         m_refCnt = other.m_refCnt;
 
         (*m_refCnt)++;
@@ -138,18 +194,19 @@ Texture& Texture::operator=(Texture&& other)
     if (this != &other)
     {
         m_id = other.m_id;
-        m_width = other.m_width;
-        m_nrChannels = other.m_nrChannels;
+        m_properties = other.m_properties;
         m_type = other.m_type;
-        m_path = other.m_path;
         m_refCnt = other.m_refCnt;
 
         other.m_id = 0;
-        other.m_width = 0;
-        other.m_height = 0;
-        other.m_nrChannels = 0;
+        for (auto& property : other.m_properties)
+        {
+            property.width = 0;
+            property.height = 0;
+            property.nrChannels = 0;
+            property.path = "";
+        }
         other.m_type = TextureType::TEXTURE_DIFFUSE;
-        other.m_path = "";
         other.m_refCnt = nullptr;
     }
     return *this;
@@ -169,7 +226,15 @@ Texture::~Texture()
             m_refCnt = nullptr;
         }
     }
+}
 
+std::string Texture::path(int idx) const
+{
+    if(idx >= m_properties.size())
+    {
+        GL_LOG_W("can't get path of texture %d", m_id);
+    }
+    return m_properties[idx].path;
 }
 
 void Texture::setWarpType(unsigned int SWarpType, unsigned int TWarpType, const std::vector<float>& borderColor)

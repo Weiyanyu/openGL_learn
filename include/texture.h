@@ -9,12 +9,23 @@ enum TextureType
     TEXTURE_SPECULAR,
     TEXTURE_NORMAL,
     TEXTURE_HEIGHT,
+    TEXTURE_AMBIENT
+};
+
+struct TextureProperty
+{
+    int         width;
+    int         height;
+    int         nrChannels;
+    std::string path;
 };
 
 class Texture
 {
 public:
     Texture(const std::string& path, TextureType textureType = TextureType::TEXTURE_DIFFUSE, bool isFlip = true);
+    Texture(const std::vector<std::string>& paths, TextureType textureType = TextureType::TEXTURE_DIFFUSE, bool isFlip = true);
+
     Texture(int width, int height, int nrChannels);
     Texture(const Texture&);
     Texture& operator=(const Texture&);
@@ -39,17 +50,11 @@ public:
         return m_type;
     }
 
-    std::string path() const
-    {
-        return m_path;
-    }
+    std::string path(int idx = 0) const;
 
 private:
-    int           m_width;
-    int           m_height;
-    int           m_nrChannels;
-    unsigned int  m_id;
-    TextureType   m_type;
-    std::string   m_path;
-    unsigned int* m_refCnt = nullptr;
+    unsigned int                 m_id;
+    TextureType                  m_type;
+    std::vector<TextureProperty> m_properties;
+    unsigned int*                m_refCnt = nullptr;
 };

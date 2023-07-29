@@ -59,6 +59,8 @@ void Mesh::draw(ShaderProgram& shader)
 {
     unsigned int diffuseNr  = 0;
     unsigned int specularNr = 0;
+    unsigned int ambientNr  = 0;
+
     shader.use();
     for(size_t i = 0; i < m_texture.size(); i++)
     {
@@ -74,6 +76,10 @@ void Mesh::draw(ShaderProgram& shader)
         case TextureType::TEXTURE_SPECULAR:
             specularNr++;
             number = std::to_string(specularNr);
+            break;
+        case TextureType::TEXTURE_AMBIENT:
+            ambientNr++;
+            number = std::to_string(ambientNr);
             break;
         default:
             GL_LOG_E("don't support texture type %d yet", textureType);
